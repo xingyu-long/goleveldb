@@ -204,7 +204,7 @@ func (p *DB) randHeight() (h int) {
 	for h < tMaxHeight && p.rnd.Int()%branching == 0 {
 		h++
 	}
-	return
+	return h
 }
 
 // Must hold RW-lock if prev == true, as it use shared prevNode slice.

@@ -787,6 +787,8 @@ func (db *DB) get(auxm *memdb.DB, auxt tFiles, key []byte, seq uint64, ro *opt.R
 		}
 	}
 
+	// 1. check MemTable
+	// 2. Immutable MemTable
 	em, fm := db.getMems()
 	for _, m := range [...]*memDB{em, fm} {
 		if m == nil {
@@ -800,6 +802,7 @@ func (db *DB) get(auxm *memdb.DB, auxt tFiles, key []byte, seq uint64, ro *opt.R
 	}
 
 	v := db.s.version()
+	// 3. from log files (SSTable)
 	value, cSched, err := v.get(auxt, ikey, ro, false)
 	v.release()
 	if cSched {

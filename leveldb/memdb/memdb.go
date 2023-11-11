@@ -292,6 +292,7 @@ func (p *DB) Put(key []byte, value []byte) error {
 	h := p.randHeight()
 	if h > p.maxHeight {
 		for i := p.maxHeight; i < h; i++ {
+			// prev of i is HEAD (0)
 			p.prevNode[i] = 0
 		}
 		p.maxHeight = h
@@ -305,7 +306,9 @@ func (p *DB) Put(key []byte, value []byte) error {
 	p.nodeData = append(p.nodeData, kvOffset, len(key), len(value), h)
 	for i, n := range p.prevNode[:h] {
 		m := n + nNext + i
+		// insert another place holder at the end
 		p.nodeData = append(p.nodeData, p.nodeData[m])
+		// next of m is node
 		p.nodeData[m] = node
 	}
 

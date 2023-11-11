@@ -192,6 +192,7 @@ type DB struct {
 	// [3]         : Height
 	// [3..height] : Next nodes
 	nodeData  []int
+	// prev node of current node
 	prevNode  [tMaxHeight]int
 	maxHeight int
 	n         int
@@ -223,6 +224,7 @@ func (p *DB) findGE(key []byte, prev bool) (int, bool) {
 			node = next
 		} else {
 			if prev {
+				// prev node in hight (h) of "key" is node
 				p.prevNode[h] = node
 			} else if cmp == 0 {
 				return next, true
@@ -305,8 +307,13 @@ func (p *DB) Put(key []byte, value []byte) error {
 	node := len(p.nodeData)
 	p.nodeData = append(p.nodeData, kvOffset, len(key), len(value), h)
 	for i, n := range p.prevNode[:h] {
+		// check all prev node of current node
+		// and build the index (prev node -> current node)
 		m := n + nNext + i
 		// insert another place holder at the end
+		// {KV offset, key length, value length, height}
+		// <PLACE HOLDER> for height index
+		// {KV offset, key length, value length, height}
 		p.nodeData = append(p.nodeData, p.nodeData[m])
 		// next of m is node
 		p.nodeData[m] = node

@@ -228,12 +228,14 @@ func (db *DB) writeLocked(batch, ourBatch *Batch, merge, sync bool) error {
 	seq := db.seq + 1
 
 	// Write journal.
+	// 1. append the record to log file
 	if err := db.writeJournal(batches, seq, sync); err != nil {
 		db.unlockWrite(overflow, merged, err)
 		return err
 	}
 
 	// Put batches.
+	// 2. append the record to MemTable
 	for _, batch := range batches {
 		if err := batch.putMem(seq, mdb.DB); err != nil {
 			panic(err)

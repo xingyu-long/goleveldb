@@ -7,6 +7,8 @@
 package memdb
 
 import (
+	"testing"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -62,6 +64,13 @@ func (p *DB) TestGet(key []byte) (value []byte, err error) {
 
 func (p *DB) TestNewIterator(slice *util.Range) iterator.Iterator {
 	return p.NewIterator(slice)
+}
+
+func TestPut(t *testing.T) {
+	db := New(comparer.DefaultComparer, 0)
+	for _, ch := range "cbdaa" {
+		db.Put([]byte(string(ch)), []byte(string(ch)))
+	}
 }
 
 var _ = testutil.Defer(func() {

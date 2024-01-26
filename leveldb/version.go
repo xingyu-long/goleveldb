@@ -459,9 +459,9 @@ func (p *versionStaging) finish(trivial bool) *version {
 	}
 	nv.levels = make([]tFiles, numLevel)
 	for level := 0; level < numLevel; level++ {
-		var baseTabels tFiles
+		var baseTables tFiles
 		if level < len(p.base.levels) {
-			baseTabels = p.base.levels[level]
+			baseTables = p.base.levels[level]
 		}
 
 		if level < len(p.levels) {
@@ -469,18 +469,18 @@ func (p *versionStaging) finish(trivial bool) *version {
 
 			// Short circuit if there is no change at all.
 			if len(scratch.added) == 0 && len(scratch.deleted) == 0 {
-				nv.levels[level] = baseTabels
+				nv.levels[level] = baseTables
 				continue
 			}
 
 			var nt tFiles
 			// Prealloc list if possible.
-			if n := len(baseTabels) + len(scratch.added) - len(scratch.deleted); n > 0 {
+			if n := len(baseTables) + len(scratch.added) - len(scratch.deleted); n > 0 {
 				nt = make(tFiles, 0, n)
 			}
 
 			// Base tables.
-			for _, t := range baseTabels {
+			for _, t := range baseTables {
 				if _, ok := scratch.deleted[t.fd.Num]; ok {
 					continue
 				}
@@ -541,7 +541,7 @@ func (p *versionStaging) finish(trivial bool) *version {
 				nv.levels[level] = nt
 			}
 		} else {
-			nv.levels[level] = baseTabels
+			nv.levels[level] = baseTables
 		}
 	}
 
